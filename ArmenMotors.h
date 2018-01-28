@@ -78,7 +78,7 @@ public:
 	//	rs232port:	
 	string	rs232port;
 
-	int comPort;
+	int comPort = 0;
 
 
 //	Constructors and destructors

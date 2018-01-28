@@ -147,7 +147,8 @@ void ArmenMotors::init_device()
 	cout << "Init: num of motor: " << number_of_motor << ", address: " << address <<
 			", freq: " << speed_of_motor << "Hz\n";
 
-	if(!openComPort()) cout << "Error open port " << rs232port << "!\n";
+
+	if(comPort==0) if(!openComPort()) cout << "Error open port " << rs232port << "!\n";
 
 
 
