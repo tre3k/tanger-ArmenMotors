@@ -34,6 +34,7 @@
 #define ArmenMotors_H
 
 #include <tango.h>
+#include <device.h>
 
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -76,9 +77,11 @@ public:
 	//	address:	
 	Tango::DevUShort	address;
 	//	rs232port:	
-	string	rs232port;
 
+	string	rs232port;
 	int comPort = 0;
+	char *devName;
+	char *rcvBuff;
 
 
 //	Constructors and destructors
@@ -200,6 +203,7 @@ public:
 	bool openComPort();
 	void closeComPort();
 	void sendCommand(char *,char *);
+	int recvData(char *,int);
 
 
 /*----- PROTECTED REGION END -----*/	//	ArmenMotors::Additional Method prototypes

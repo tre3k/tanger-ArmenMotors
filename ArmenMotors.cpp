@@ -149,8 +149,20 @@ void ArmenMotors::init_device()
 
 
 	if(comPort==0) if(!openComPort()) cout << "Error open port " << rs232port << "!\n";
+	if(comPort<1){
+		device_status = "Error open port: " + rs232port + "\n";
+		device_state = Tango::FAULT;
+		return;
+	}
+	device_state = Tango::OPEN;
 
+	devName = new char [3];
+	strcpy(devName,"\x00\x00\x00");
 
+	sendCommand(devName,(char *)"A0012");  //This test command, controller must be recived "OK"
+	rcvBuff = new char [2];
+	recvData(rcvBuff,2);
+	cout << rcvBuff << "\n";
 
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::init_device
 }
@@ -303,11 +315,16 @@ void ArmenMotors::add_dynamic_attributes()
 //--------------------------------------------------------
 Tango::DevBoolean ArmenMotors::power_on(Tango::DevBoolean argin)
 {
-	Tango::DevBoolean argout;
+	Tango::DevBoolean argout = false;
 	DEBUG_STREAM << "ArmenMotors::PowerOn()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(ArmenMotors::power_on) ENABLED START -----*/
 	
-	argout = true;
+	if(argin){
+		device_state = Tango::ON;
+		argout = true;
+	}else{
+		device_state = Tango::OFF;
+	}
 	
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::power_on
 	return argout;
@@ -393,6 +410,7 @@ bool ArmenMotors::openComPort(){
 }
 
 void ArmenMotors::closeComPort(){
+	device_state = Tango::CLOSE;
 	close(comPort);
 	return;
 }
@@ -402,6 +420,12 @@ void ArmenMotors::sendCommand(char *devicename, char *command){
 	for(int i=0;i<3;i++) buffer[i] = devicename[i];
 	for(int i=0;i<5;i++) buffer[i+3] = command[i];
 	write(comPort,buffer,8);
+	return;
+}
+
+int ArmenMotors::recvData(char *buffer,int bytes){
+	int rcvBytes = read(comPort,buffer,bytes);
+	return rcvBytes;
 }
 
 /*----- PROTECTED REGION END -----*/	//	ArmenMotors::namespace_ending
