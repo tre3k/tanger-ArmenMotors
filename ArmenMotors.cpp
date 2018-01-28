@@ -397,5 +397,12 @@ void ArmenMotors::closeComPort(){
 	return;
 }
 
+void ArmenMotors::sendCommand(char *devicename, char *command){
+	char buffer[8];
+	for(int i=0;i<3;i++) buffer[i] = devicename[i];
+	for(int i=0;i<5;i++) buffer[i+3] = command[i];
+	write(comPort,buffer,8);
+}
+
 /*----- PROTECTED REGION END -----*/	//	ArmenMotors::namespace_ending
 } //	namespace

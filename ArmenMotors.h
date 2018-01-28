@@ -199,6 +199,7 @@ public:
 
 	bool openComPort();
 	void closeComPort();
+	void sendCommand(char *,char *);
 
 
 /*----- PROTECTED REGION END -----*/	//	ArmenMotors::Additional Method prototypes
