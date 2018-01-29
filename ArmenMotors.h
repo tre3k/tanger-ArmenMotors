@@ -202,7 +202,7 @@ public:
 
 	bool openComPort();
 	void closeComPort();
-	void sendCommand(char *,char *);
+	void sendCommand(char *);
 	int recvData(char *,int);
 
 

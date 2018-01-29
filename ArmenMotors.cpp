@@ -360,6 +360,8 @@ void ArmenMotors::stop()
 	DEBUG_STREAM << "ArmenMotors::Stop()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(ArmenMotors::stop) ENABLED START -----*/
 	
+	sendCommand((char *)"A0012"); //for test
+
 	//	Add your own code
 	cout << "motor " << number_of_motor << " stop\n";
 	
@@ -435,11 +437,20 @@ void ArmenMotors::closeComPort(){
 	return;
 }
 
-void ArmenMotors::sendCommand(char *devicename, char *command){
-	char buffer[8];
-	for(int i=0;i<3;i++) buffer[i] = devicename[i];
-	for(int i=0;i<5;i++) buffer[i+3] = command[i];
-	write(comPort,buffer,8);
+void ArmenMotors::sendCommand(char *command){
+	char *buffer = new char[8];
+	int n_written = 0,spot = 0;
+	char prefix[3];
+	sprintf(prefix,"0%d",address);
+	for(int i=0;i<3;i++) buffer[i]=prefix[i];
+	for(int i=0;i<5;i++) buffer[i+3]=command[i];
+
+	do{
+	    n_written = write(comPort, &buffer[spot], 1);
+	    spot += n_written;
+	} while (spot < 8);
+
+	delete [] buffer;
 	return;
 }
 
