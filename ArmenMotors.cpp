@@ -56,6 +56,7 @@
 //  MotionLeft    |  motion_left
 //  MotionRight   |  motion_right
 //  Stop          |  stop
+//  TestPing      |  test_ping
 //================================================================
 
 //================================================================
@@ -302,7 +303,7 @@ void ArmenMotors::add_dynamic_attributes()
 //--------------------------------------------------------
 Tango::DevBoolean ArmenMotors::power_on(Tango::DevBoolean argin)
 {
-	Tango::DevBoolean argout = false;
+	Tango::DevBoolean argout;
 	DEBUG_STREAM << "ArmenMotors::PowerOn()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(ArmenMotors::power_on) ENABLED START -----*/
 	
@@ -359,13 +360,35 @@ void ArmenMotors::stop()
 {
 	DEBUG_STREAM << "ArmenMotors::Stop()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(ArmenMotors::stop) ENABLED START -----*/
-	
-	sendCommand((char *)"A0012"); //for test
 
 	//	Add your own code
 	cout << "motor " << number_of_motor << " stop\n";
 	
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::stop
+}
+//--------------------------------------------------------
+/**
+ *	Command TestPing related method
+ *	Description: send command xxxA0012 and controller must be recived ``OK``
+ *
+ *	@returns 
+ */
+//--------------------------------------------------------
+Tango::DevString ArmenMotors::test_ping()
+{
+	Tango::DevString argout;
+	DEBUG_STREAM << "ArmenMotors::TestPing()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(ArmenMotors::test_ping) ENABLED START -----*/
+	
+	char *buffer = new char[2];
+	sendCommand((char *)"A0012");
+	recvData(buffer,2);
+	
+	argout = buffer;
+
+
+	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::test_ping
+	return argout;
 }
 //--------------------------------------------------------
 /**

@@ -109,6 +109,21 @@ bool ArmenMotors::is_Stop_allowed(TANGO_UNUSED(const CORBA::Any &any))
 	return true;
 }
 
+//--------------------------------------------------------
+/**
+ *	Method      : ArmenMotors::is_TestPing_allowed()
+ *	Description : Execution allowed for TestPing attribute
+ */
+//--------------------------------------------------------
+bool ArmenMotors::is_TestPing_allowed(TANGO_UNUSED(const CORBA::Any &any))
+{
+	//	Not any excluded states for TestPing command.
+	/*----- PROTECTED REGION ID(ArmenMotors::TestPingStateAllowed) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::TestPingStateAllowed
+	return true;
+}
+
 
 /*----- PROTECTED REGION ID(ArmenMotors::ArmenMotorsStateAllowed.AdditionalMethods) ENABLED START -----*/
 
