@@ -148,6 +148,7 @@ void ArmenMotors::init_device()
 			", freq: " << speed_of_motor << "Hz\n";
 
 
+	if(comPort==0) if(!openComPort()) return;
 
 
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::init_device
@@ -384,16 +385,20 @@ void ArmenMotors::add_dynamic_commands()
 
 bool ArmenMotors::openComPort(){
 
-
 	comPort = open(rs232port.c_str(),O_RDWR | O_NOCTTY);
-	if(comPort < 1) return false;
+	if(comPort < 1){
+		device_status = "error open port: "+rs232port+"\n";
+		device_state = Tango::FAULT;
+		return false;
+	}
 	struct termios tty;
 	struct termios tty_old;
 	memset (&tty, 0, sizeof tty);
 
 	if ( tcgetattr ( comPort, &tty ) != 0 ) {
-		cout << "Error get attribute\n";
-
+		device_status = "error get tty attribute\n";
+		device_state = Tango::FAULT;
+		return false;
 	}
 
 	tty_old = tty;
@@ -401,8 +406,26 @@ bool ArmenMotors::openComPort(){
 	cfsetospeed (&tty, (speed_t)B9600);
 	cfsetispeed (&tty, (speed_t)B9600);
 
+	tty.c_cflag     &=  ~PARENB;
+	tty.c_cflag     &=  ~CSTOPB;
+	tty.c_cflag     &=  ~CSIZE;
+	tty.c_cflag     |=  CS8;
 
+	tty.c_cflag     &=  ~CRTSCTS;
+	tty.c_cc[VMIN]   =  1;
+	tty.c_cc[VTIME]  =  5;
+	tty.c_cflag     |=  CREAD | CLOCAL;
 
+	cfmakeraw(&tty);
+
+	tcflush(comPort, TCIFLUSH );
+	if(tcsetattr( comPort, TCSANOW, &tty ) != 0) {
+		device_status = "error get tty attribute\n";
+		device_state = Tango::FAULT;
+		return false;
+	}
+
+	device_state = Tango::OPEN;
 	return true;
 }
 
