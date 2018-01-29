@@ -148,21 +148,7 @@ void ArmenMotors::init_device()
 			", freq: " << speed_of_motor << "Hz\n";
 
 
-	if(comPort==0) if(!openComPort()) cout << "Error open port " << rs232port << "!\n";
-	if(comPort<1){
-		device_status = "Error open port: " + rs232port + "\n";
-		device_state = Tango::FAULT;
-		return;
-	}
-	device_state = Tango::OPEN;
 
-	devName = new char [3];
-	strcpy(devName,"\x00\x00\x00");
-
-	sendCommand(devName,(char *)"A0012");  //This test command, controller must be recived "OK"
-	rcvBuff = new char [2];
-	recvData(rcvBuff,2);
-	cout << rcvBuff << "\n";
 
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::init_device
 }
@@ -374,6 +360,7 @@ void ArmenMotors::stop()
 	/*----- PROTECTED REGION ID(ArmenMotors::stop) ENABLED START -----*/
 	
 	//	Add your own code
+	cout << "motor " << number_of_motor << " stop\n";
 	
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::stop
 }
@@ -397,14 +384,24 @@ void ArmenMotors::add_dynamic_commands()
 
 bool ArmenMotors::openComPort(){
 
+
 	comPort = open(rs232port.c_str(),O_RDWR | O_NOCTTY);
 	if(comPort < 1) return false;
-	struct termios port_cfg;
-	tcgetattr(comPort,&port_cfg);
-	cfmakeraw(&port_cfg);
-	cfsetospeed(&port_cfg,PORT_BAUDRATE);
-	cfsetispeed(&port_cfg,PORT_BAUDRATE);
-	if(tcsetattr(comPort,TCSANOW,&port_cfg) < 0) return false;
+	struct termios tty;
+	struct termios tty_old;
+	memset (&tty, 0, sizeof tty);
+
+	if ( tcgetattr ( comPort, &tty ) != 0 ) {
+		cout << "Error get attribute\n";
+
+	}
+
+	tty_old = tty;
+
+	cfsetospeed (&tty, (speed_t)B9600);
+	cfsetispeed (&tty, (speed_t)B9600);
+
+
 
 	return true;
 }
