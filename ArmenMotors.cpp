@@ -345,7 +345,17 @@ void ArmenMotors::motion_right()
 	DEBUG_STREAM << "ArmenMotors::MotionRight()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(ArmenMotors::motion_right) ENABLED START -----*/
 	
-	//	Add your own code
+	char *buffer = new char[8];
+	sendCommand((char *)"M1000");
+	recvData(buffer,1);
+	sendCommand((char*)"Z0000");
+	recvData(buffer,1);
+
+	int freq = 0x01ff;
+	char *code=new char[5];
+	sprintf(code,"L%c%c00",freq&0xff,(freq>>8)&0xff);
+	sendCommand(code);
+	recvData(buffer,2);
 	
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::motion_right
 }
@@ -363,6 +373,11 @@ void ArmenMotors::stop()
 
 	//	Add your own code
 	cout << "motor " << number_of_motor << " stop\n";
+	char *buffer = new char[8];
+	sendCommand((char*)"P0000");		//Stop
+	//recvData(buffer,1);
+	sendCommand((char*)"Z1000");		//Poweroff
+	//recvData(buffer,1);
 	
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::stop
 }
@@ -380,6 +395,8 @@ Tango::DevString ArmenMotors::test_ping()
 	DEBUG_STREAM << "ArmenMotors::TestPing()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(ArmenMotors::test_ping) ENABLED START -----*/
 	
+	//char *forp=new char
+
 	char *buffer = new char[2];
 	sendCommand((char *)"A0012");
 	recvData(buffer,2);
