@@ -312,13 +312,21 @@ Tango::DevBoolean ArmenMotors::power_on(Tango::DevBoolean argin)
 	DEBUG_STREAM << "ArmenMotors::PowerOn()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(ArmenMotors::power_on) ENABLED START -----*/
 	
+	char *buff=new char[8];
+
 	if(argin){
+		sprintf(buff,"081Z0000"); //enable on
+		writeread(comPort,buff,8);
 		device_state = Tango::ON;
 		argout = true;
 	}else{
+		sprintf(buff,"081Z1000"); //disable (enable off)
+		writeread(comPort,buff,8);
 		device_state = Tango::OFF;
 	}
 	
+	delete [] buff;
+
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::power_on
 	return argout;
 }
@@ -353,11 +361,21 @@ void ArmenMotors::motion_right()
 	/*----- PROTECTED REGION ID(ArmenMotors::motion_right) ENABLED START -----*/
 
 	char *buff = new char[9];
+	sprintf(buff,"081A0123"); //test
+	writeread(comPort,buff,8,2);
+	cout << buff << "\n";
+
 	sprintf(buff,"081M1000"); //set direction right
 	writeread(comPort,buff,8);
 	setFreq();
-	sprintf(buff,"081T4000"); //set direction right
+	sprintf(buff,"081T4000"); //enable freq
 	writeread(comPort,buff,8);
+	sprintf(buff,"081B0000"); //start
+	writeread(comPort,buff,8);
+
+	sprintf(buff,"081A0123"); //test
+	writeread(comPort,buff,8,2);
+	cout << buff << "\n";
 
 	delete [] buff;
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::motion_right
@@ -383,7 +401,7 @@ void ArmenMotors::stop()
 	cout << buff << "\n";
 
 	/* command stop! */
-	sprintf(buff,"081P0123"); //STOP!
+	sprintf(buff,"081P0000"); //STOP!
 	writeread(comPort,buff,8);
 
 	device_state = Tango::ON;
@@ -487,8 +505,9 @@ void ArmenMotors::setFreq(){
 	hight = (speed_of_motor & 0xff);
 	char *buff = new char [8];
 
-	cout << "Set freq" << speed_of_motor << " Hz\n";
+	cout << "Set freq " << speed_of_motor << " Hz\n";
 	sprintf(buff,"081L%c%c01",hight,low);
+	cout << buff << "\n";
 	writeread(comPort,buff,8);
 
 	delete [] buff;
