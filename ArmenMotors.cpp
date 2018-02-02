@@ -347,7 +347,7 @@ void ArmenMotors::motion_left()
 	writeread(comPort,buff,8,2);
 	cout << buff << "\n";
 
-	sprintf(buff,"081M0000"); //set direction left
+	sprintf(buff,"081M0000"); //set direction right
 	writeread(comPort,buff,8);
 	setFreq();
 	sprintf(buff,"081T4000"); //enable freq
@@ -358,6 +358,8 @@ void ArmenMotors::motion_left()
 	sprintf(buff,"081A0123"); //test
 	writeread(comPort,buff,8,2);
 	cout << buff << "\n";
+
+	delete [] buff;
 
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::motion_left
 }
@@ -515,7 +517,7 @@ int ArmenMotors::writeread(int dev,char *buff,int size_write,int size_read){
 void ArmenMotors::setFreq(){
 	char low,hight;
 	low = (char)((speed_of_motor>>8) & 0xff);
-	hight = (speed_of_motor & 0xff);
+	hight = (char)(speed_of_motor & 0xff);
 	char *buff = new char [8];
 
 	cout << "Set freq " << speed_of_motor << " Hz\n";
