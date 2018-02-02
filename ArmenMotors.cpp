@@ -150,11 +150,12 @@ void ArmenMotors::init_device()
 			", freq: " << speed_of_motor << "Hz\n";
 
 
-	if(comPort==0){
+	if(comPort==0 && number_of_motor==0){
 		comPort = initComPort();
 		cout << "Com port has been init!\n";
 	}
 
+	device_state = Tango::INIT;
 
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::init_device
 }
@@ -389,9 +390,7 @@ Tango::DevString ArmenMotors::test_ping()
 	/*----- PROTECTED REGION ID(ArmenMotors::test_ping) ENABLED START -----*/
 	
 
-
-	
-
+	argout = "asd";
 
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::test_ping
 	return argout;

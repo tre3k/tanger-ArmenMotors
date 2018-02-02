@@ -39,6 +39,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <termios.h>
+#include <iostream>
 
 
 #define PORT_BAUDRATE B9600
