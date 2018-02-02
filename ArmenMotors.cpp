@@ -347,15 +347,17 @@ void ArmenMotors::motion_right()
 	
 	char *buffer = new char[8];
 	sendCommand((char *)"M1000");
-	recvData(buffer,1);
+	//recvData(buffer,1);
 	sendCommand((char*)"Z0000");
-	recvData(buffer,1);
+	//recvData(buffer,1);
 
-	int freq = 0x01ff;
+	double fq=1000;
+	int freq = (int)(65536.0-(7500000.0/(fq))/4.0);
 	char *code=new char[5];
 	sprintf(code,"L%c%c00",freq&0xff,(freq>>8)&0xff);
 	sendCommand(code);
-	recvData(buffer,2);
+	//recvData(buffer,2);
+	sendCommand((char*)"B0000");
 	
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::motion_right
 }
