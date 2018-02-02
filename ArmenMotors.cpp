@@ -342,9 +342,22 @@ void ArmenMotors::motion_left()
 	DEBUG_STREAM << "ArmenMotors::MotionLeft()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(ArmenMotors::motion_left) ENABLED START -----*/
 	
-	//	Add your own code
-	
+	char *buff = new char[9];
+	sprintf(buff,"081A0123"); //test
+	writeread(comPort,buff,8,2);
+	cout << buff << "\n";
 
+	sprintf(buff,"081M0000"); //set direction left
+	writeread(comPort,buff,8);
+	setFreq();
+	sprintf(buff,"081T4000"); //enable freq
+	writeread(comPort,buff,8);
+	sprintf(buff,"081B0000"); //start
+	writeread(comPort,buff,8);
+
+	sprintf(buff,"081A0123"); //test
+	writeread(comPort,buff,8,2);
+	cout << buff << "\n";
 
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::motion_left
 }
