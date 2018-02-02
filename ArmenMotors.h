@@ -208,6 +208,7 @@ public:
 	int comPort;
 	int initComPort();
 	int writeread(int,char *,int,int size_read=0);
+	void setFreq();
 
 
 /*----- PROTECTED REGION END -----*/	//	ArmenMotors::Additional Method prototypes

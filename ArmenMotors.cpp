@@ -355,6 +355,9 @@ void ArmenMotors::motion_right()
 	char *buff = new char[9];
 	sprintf(buff,"081M1000"); //set direction right
 	writeread(comPort,buff,8);
+	setFreq();
+	sprintf(buff,"081T4000"); //set direction right
+	writeread(comPort,buff,8);
 
 	delete [] buff;
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::motion_right
@@ -476,6 +479,19 @@ int ArmenMotors::writeread(int dev,char *buff,int size_write,int size_read){
 		spot += read(dev,&buff[i],1);
 	}
 	  return 0;
+}
+
+void ArmenMotors::setFreq(){
+	char low,hight;
+	low = (char)((speed_of_motor>>8) & 0xff);
+	hight = (speed_of_motor & 0xff);
+	char *buff = new char [8];
+
+	cout << "Set freq" << speed_of_motor << " Hz\n";
+	sprintf(buff,"081L%c%c01",hight,low);
+	writeread(comPort,buff,8);
+
+	delete [] buff;
 }
 
 /*----- PROTECTED REGION END -----*/	//	ArmenMotors::namespace_ending
