@@ -117,7 +117,8 @@ void ArmenMotors::delete_device()
 	DEBUG_STREAM << "ArmenMotors::delete_device() " << device_name << endl;
 	/*----- PROTECTED REGION ID(ArmenMotors::delete_device) ENABLED START -----*/
 	
-	closeComPort();
+	close(comPort);
+	device_state = Tango::CLOSE;
 	
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::delete_device
 }
@@ -149,7 +150,10 @@ void ArmenMotors::init_device()
 			", freq: " << speed_of_motor << "Hz\n";
 
 
-	if(comPort==0) if(!openComPort()) return;
+	if(comPort==0){
+		comPort = initComPort();
+		cout << "Com port has been init!\n";
+	}
 
 
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::init_device
@@ -331,6 +335,8 @@ void ArmenMotors::motion_left()
 	
 	//	Add your own code
 	
+
+
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::motion_left
 }
 //--------------------------------------------------------
@@ -345,19 +351,7 @@ void ArmenMotors::motion_right()
 	DEBUG_STREAM << "ArmenMotors::MotionRight()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(ArmenMotors::motion_right) ENABLED START -----*/
 	
-	char *buffer = new char[8];
-	sendCommand((char *)"M1000");
-	//recvData(buffer,1);
-	sendCommand((char*)"Z0000");
-	//recvData(buffer,1);
 
-	double fq=1000;
-	int freq = (int)(65536.0-(7500000.0/(fq))/4.0);
-	char *code=new char[5];
-	sprintf(code,"L%c%c00",freq&0xff,(freq>>8)&0xff);
-	sendCommand(code);
-	//recvData(buffer,2);
-	sendCommand((char*)"B0000");
 	
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::motion_right
 }
@@ -374,12 +368,9 @@ void ArmenMotors::stop()
 	/*----- PROTECTED REGION ID(ArmenMotors::stop) ENABLED START -----*/
 
 	//	Add your own code
-	cout << "motor " << number_of_motor << " stop\n";
-	char *buffer = new char[8];
-	sendCommand((char*)"P0000");		//Stop
-	//recvData(buffer,1);
-	sendCommand((char*)"Z1000");		//Poweroff
-	//recvData(buffer,1);
+
+
+
 	
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::stop
 }
@@ -397,13 +388,9 @@ Tango::DevString ArmenMotors::test_ping()
 	DEBUG_STREAM << "ArmenMotors::TestPing()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(ArmenMotors::test_ping) ENABLED START -----*/
 	
-	//char *forp=new char
 
-	char *buffer = new char[2];
-	sendCommand((char *)"A0012");
-	recvData(buffer,2);
+
 	
-	argout = buffer;
 
 
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::test_ping
@@ -427,78 +414,57 @@ void ArmenMotors::add_dynamic_commands()
 
 /*----- PROTECTED REGION ID(ArmenMotors::namespace_ending) ENABLED START -----*/
 
-bool ArmenMotors::openComPort(){
-
-	comPort = open(rs232port.c_str(),O_RDWR | O_NOCTTY);
-	if(comPort < 1){
-		device_status = "error open port: "+rs232port+"\n";
-		device_state = Tango::FAULT;
-		return false;
-	}
+int ArmenMotors::initComPort(void){
+	int port = open(rs232port.c_str(), O_RDWR| O_NOCTTY );
 	struct termios tty;
 	struct termios tty_old;
-	memset (&tty, 0, sizeof tty);
+	memset (&tty, 0, sizeof(tty));
 
-	if ( tcgetattr ( comPort, &tty ) != 0 ) {
-		device_status = "error get tty attribute\n";
-		device_state = Tango::FAULT;
-		return false;
+	/* Error Handling */
+	if(tcgetattr(port, &tty )!= 0){
+		cout << "Error get attribute port\n";
 	}
 
+	/* Save old tty parameters */
 	tty_old = tty;
 
-	cfsetospeed (&tty, (speed_t)B9600);
-	cfsetispeed (&tty, (speed_t)B9600);
+	/* Set Baud Rate */
+	cfsetospeed (&tty, (speed_t) PORT_BAUDRATE);
+	cfsetispeed (&tty, (speed_t) PORT_BAUDRATE);
 
-	tty.c_cflag     &=  ~PARENB;
+	tty.c_cflag     &=  ~PARENB;            // Make 8n1
 	tty.c_cflag     &=  ~CSTOPB;
 	tty.c_cflag     &=  ~CSIZE;
 	tty.c_cflag     |=  CS8;
 
-	tty.c_cflag     &=  ~CRTSCTS;
-	tty.c_cc[VMIN]   =  1;
-	tty.c_cc[VTIME]  =  5;
-	tty.c_cflag     |=  CREAD | CLOCAL;
+	tty.c_cflag     &=  ~CRTSCTS;           // no flow control
+	tty.c_cc[VMIN]   =  1;                  // read doesn't block
+	tty.c_cc[VTIME]  =  5;                  // 0.5 seconds read timeout
+	tty.c_cflag     |=  CREAD | CLOCAL;     // turn on READ & ignore ctrl lines
 
 	cfmakeraw(&tty);
 
-	tcflush(comPort, TCIFLUSH );
-	if(tcsetattr( comPort, TCSANOW, &tty ) != 0) {
-		device_status = "error get tty attribute\n";
-		device_state = Tango::FAULT;
-		return false;
+	tcflush(port, TCIFLUSH);
+	if (tcsetattr(port,TCSANOW,&tty)!=0) {
+		cout << "Error set attribute\n";
 	}
 
-	device_state = Tango::OPEN;
-	return true;
+	return port;
 }
 
-void ArmenMotors::closeComPort(){
-	device_state = Tango::CLOSE;
-	close(comPort);
-	return;
-}
+int ArmenMotors::writeread(int dev,char *buff,int size_write,int size_read=0){
+	int spot=0;
 
-void ArmenMotors::sendCommand(char *command){
-	char *buffer = new char[8];
-	int n_written = 0,spot = 0;
-	char prefix[3];
-	sprintf(prefix,"0%d",address);
-	for(int i=0;i<3;i++) buffer[i]=prefix[i];
-	for(int i=0;i<5;i++) buffer[i+3]=command[i];
+	for(int i=0;i<size_write;i++){
+		if(write(dev,&buff[i],1)==0) break;
+	}
 
-	do{
-	    n_written = write(comPort, &buffer[spot], 1);
-	    spot += n_written;
-	} while (spot < 8);
+	for(int i=0;i<size_write;i++) buff[i] = 0x00;
 
-	delete [] buffer;
-	return;
-}
-
-int ArmenMotors::recvData(char *buffer,int bytes){
-	int rcvBytes = read(comPort,buffer,bytes);
-	return rcvBytes;
+	for(int i=0;i<size_read;i++){
+		spot += read(dev,&buff[i],1);
+	}
+	  return 0;
 }
 
 /*----- PROTECTED REGION END -----*/	//	ArmenMotors::namespace_ending

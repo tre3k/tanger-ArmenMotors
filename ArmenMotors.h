@@ -205,10 +205,8 @@ public:
 /*----- PROTECTED REGION ID(ArmenMotors::Additional Method prototypes) ENABLED START -----*/
 
 	int comPort;
-	bool openComPort();
-	void closeComPort();
-	void sendCommand(char *);
-	int recvData(char *,int);
+	int initComPort();
+	int writeread(int,char *,int,int);
 
 
 /*----- PROTECTED REGION END -----*/	//	ArmenMotors::Additional Method prototypes
