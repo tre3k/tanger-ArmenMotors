@@ -351,9 +351,12 @@ void ArmenMotors::motion_right()
 {
 	DEBUG_STREAM << "ArmenMotors::MotionRight()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(ArmenMotors::motion_right) ENABLED START -----*/
-	
 
-	
+	char *buff = new char[9];
+	sprintf(buff,"081M1000"); //set direction right
+	writeread(comPort,buff,8);
+
+	delete [] buff;
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::motion_right
 }
 //--------------------------------------------------------
@@ -370,8 +373,18 @@ void ArmenMotors::stop()
 
 	//	Add your own code
 
+	/* Test command */
+	char *buff = new char[9];
+	sprintf(buff,"081A0123"); //test
+	writeread(comPort,buff,8,2);
+	cout << buff << "\n";
 
+	/* command stop! */
+	sprintf(buff,"081P0123"); //STOP!
+	writeread(comPort,buff,8);
 
+	device_state = Tango::ON;
+	delete [] buff;
 	
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::stop
 }
@@ -390,7 +403,6 @@ Tango::DevString ArmenMotors::test_ping()
 	/*----- PROTECTED REGION ID(ArmenMotors::test_ping) ENABLED START -----*/
 	
 
-	argout = "asd";
 
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::test_ping
 	return argout;
@@ -451,7 +463,7 @@ int ArmenMotors::initComPort(void){
 	return port;
 }
 
-int ArmenMotors::writeread(int dev,char *buff,int size_write,int size_read=0){
+int ArmenMotors::writeread(int dev,char *buff,int size_write,int size_read){
 	int spot=0;
 
 	for(int i=0;i<size_write;i++){
