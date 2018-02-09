@@ -14,7 +14,7 @@
 #
 # MAKE_ENV is the path to find common environment to buil project
 #
-MAKE_ENV = /usr/share/pogo/preferences
+MAKE_ENV = /usr/local/share/pogo/preferences
 
 #=============================================================================
 # PACKAGE_NAME is the name of the library/device/exe you want to build

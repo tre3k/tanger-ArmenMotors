@@ -185,14 +185,6 @@ public:
 	 */
 	virtual void stop();
 	virtual bool is_Stop_allowed(const CORBA::Any &any);
-	/**
-	 *	Command TestPing related method
-	 *	Description: send command xxxA0012 and controller must be recived ``OK``
-	 *
-	 *	@returns 
-	 */
-	virtual Tango::DevString test_ping();
-	virtual bool is_TestPing_allowed(const CORBA::Any &any);
 
 
 	//--------------------------------------------------------

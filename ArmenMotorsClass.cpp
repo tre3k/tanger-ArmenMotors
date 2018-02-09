@@ -221,23 +221,6 @@ CORBA::Any *StopClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const COR
 	return new CORBA::Any();
 }
 
-//--------------------------------------------------------
-/**
- * method : 		TestPingClass::execute()
- * description : 	method to trigger the execution of the command.
- *
- * @param	device	The device on which the command must be executed
- * @param	in_any	The command input data
- *
- *	returns The command output data (packed in the Any object)
- */
-//--------------------------------------------------------
-CORBA::Any *TestPingClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
-{
-	cout2 << "TestPingClass::execute(): arrived" << endl;
-	return insert((static_cast<ArmenMotors *>(device))->test_ping());
-}
-
 
 //===================================================================
 //	Properties management
@@ -549,15 +532,6 @@ void ArmenMotorsClass::command_factory()
 			"",
 			Tango::OPERATOR);
 	command_list.push_back(pStopCmd);
-
-	//	Command TestPing
-	TestPingClass	*pTestPingCmd =
-		new TestPingClass("TestPing",
-			Tango::DEV_VOID, Tango::DEV_STRING,
-			"",
-			"",
-			Tango::OPERATOR);
-	command_list.push_back(pTestPingCmd);
 
 	/*----- PROTECTED REGION ID(ArmenMotorsClass::command_factory_after) ENABLED START -----*/
 	

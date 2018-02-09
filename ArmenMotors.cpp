@@ -56,7 +56,6 @@
 //  MotionLeft    |  motion_left
 //  MotionRight   |  motion_right
 //  Stop          |  stop
-//  TestPing      |  test_ping
 //================================================================
 
 //================================================================
@@ -426,25 +425,6 @@ void ArmenMotors::stop()
 }
 //--------------------------------------------------------
 /**
- *	Command TestPing related method
- *	Description: send command xxxA0012 and controller must be recived ``OK``
- *
- *	@returns 
- */
-//--------------------------------------------------------
-Tango::DevString ArmenMotors::test_ping()
-{
-	Tango::DevString argout;
-	DEBUG_STREAM << "ArmenMotors::TestPing()  - " << device_name << endl;
-	/*----- PROTECTED REGION ID(ArmenMotors::test_ping) ENABLED START -----*/
-	
-
-
-	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::test_ping
-	return argout;
-}
-//--------------------------------------------------------
-/**
  *	Method      : ArmenMotors::add_dynamic_commands()
  *	Description : Create the dynamic commands if any
  *                for specified device.
@@ -527,6 +507,22 @@ void ArmenMotors::setFreq(){
 
 	delete [] buff;
 }
+// //--------------------------------------------------------
+// /**
+//  *	Command TestPing related method
+//  *	Description: send command xxxA0012 and controller must be recived ``OK``
+//  *
+//  *	@returns 
+//  */
+// //--------------------------------------------------------
+// Tango::DevString ArmenMotors::test_ping()
+// {
+// 	Tango::DevString argout;
+// 	DEBUG_STREAM << "ArmenMotors::TestPing()  - " << device_name << endl;
+// 	
+// 	return argout;
+// }
+
 
 /*----- PROTECTED REGION END -----*/	//	ArmenMotors::namespace_ending
 } //	namespace
