@@ -446,9 +446,9 @@ Tango::DevBoolean ArmenMotors::get_end()
 
 	sprintf(buff,"081V0001"); //getEnd
 	writeread(comPort,buff,8,1);
-	cout << buff << "\n";
-
 	
+	if(!(buff[0]&0x01)) argout = true;
+
 	return argout;
 }
 //--------------------------------------------------------
