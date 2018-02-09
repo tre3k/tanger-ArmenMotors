@@ -146,6 +146,29 @@ public:
 	{return (static_cast<ArmenMotors *>(dev))->is_Stop_allowed(any);}
 };
 
+//	Command GetEnd class definition
+class GetEndClass : public Tango::Command
+{
+public:
+	GetEndClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	GetEndClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~GetEndClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<ArmenMotors *>(dev))->is_GetEnd_allowed(any);}
+};
+
 
 /**
  *	The ArmenMotorsClass singleton definition

@@ -56,6 +56,7 @@
 //  MotionLeft    |  motion_left
 //  MotionRight   |  motion_right
 //  Stop          |  stop
+//  GetEnd        |  get_end
 //================================================================
 
 //================================================================
@@ -422,6 +423,33 @@ void ArmenMotors::stop()
 	delete [] buff;
 	
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::stop
+}
+//--------------------------------------------------------
+/**
+ *	Command GetEnd related method
+ *	Description: 
+ *
+ *	@returns 
+ */
+//--------------------------------------------------------
+Tango::DevBoolean ArmenMotors::get_end()
+{
+	Tango::DevBoolean argout;
+	DEBUG_STREAM << "ArmenMotors::GetEnd()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(ArmenMotors::get_end) ENABLED START -----*/
+	
+	argout = false;
+	char *buff = new char[9];
+	sprintf(buff,"081A0123"); //test
+	writeread(comPort,buff,8,2);
+	cout << buff << "\n";
+
+	sprintf(buff,"081V0001"); //getEnd
+	writeread(comPort,buff,8,1);
+	cout << buff << "\n";
+
+	
+	return argout;
 }
 //--------------------------------------------------------
 /**

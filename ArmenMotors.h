@@ -185,6 +185,14 @@ public:
 	 */
 	virtual void stop();
 	virtual bool is_Stop_allowed(const CORBA::Any &any);
+	/**
+	 *	Command GetEnd related method
+	 *	Description: 
+	 *
+	 *	@returns 
+	 */
+	virtual Tango::DevBoolean get_end();
+	virtual bool is_GetEnd_allowed(const CORBA::Any &any);
 
 
 	//--------------------------------------------------------
