@@ -410,6 +410,8 @@ void ArmenMotors::motion_left()
 	sprintf(buff,"081A0123"); //test
 	writeread(comPort,buff,8,2);
 	cout << buff << "\n";
+    
+    device_status = "In motion to left";
 
 	delete [] buff;
 
@@ -443,6 +445,8 @@ void ArmenMotors::motion_right()
 	sprintf(buff,"081A0123"); //test
 	writeread(comPort,buff,8,2);
 	cout << buff << "\n";
+    
+    device_status = "In motion to right";
 
 	delete [] buff;
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::motion_right
@@ -472,6 +476,9 @@ void ArmenMotors::stop()
 	writeread(comPort,buff,8);
 
 	device_state = Tango::ON;
+    
+    device_status = "Stop";
+    
 	delete [] buff;
 	
 	/*----- PROTECTED REGION END -----*/	//	ArmenMotors::stop
