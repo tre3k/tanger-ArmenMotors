@@ -475,7 +475,7 @@ void ArmenMotors::stop()
 	sprintf(buff,"081P0000"); //STOP!
 	writeread(comPort,buff,8);
 
-	device_state = Tango::ON;
+	//device_state = Tango::ON;
     
     device_status = "Stop";
     
