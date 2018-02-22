@@ -150,10 +150,10 @@ void ArmenMotors::init_device()
 			", freq: " << speed_of_motor << "Hz\n";
 
 
-	if(comPort==0 && number_of_motor==0){
+	//if(comPort==0 && number_of_motor==0){
 		comPort = initComPort();
 		cout << "Com port has been init!\n";
-	}
+	//}
 
 	device_state = Tango::INIT;
 

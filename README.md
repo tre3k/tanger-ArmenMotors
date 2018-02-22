@@ -8,6 +8,7 @@ Test module for Tango CS for Armen motors controller
  - MotionRight
  - Stop
  - PowerOn(bool) - true - on / false - off
+ - bool GetEnd - return state at End motion
 
 ## Attributes:
  - number_of_motors - The controller of Armen supported 6 motors
