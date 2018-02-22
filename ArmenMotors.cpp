@@ -314,6 +314,7 @@ Tango::DevBoolean ArmenMotors::power_on(Tango::DevBoolean argin)
 	
 	char *buff=new char[8];
 
+    /*
 	if(argin){
 		sprintf(buff,"081Z0000"); //enable on
 		writeread(comPort,buff,8);
@@ -324,6 +325,57 @@ Tango::DevBoolean ArmenMotors::power_on(Tango::DevBoolean argin)
 		writeread(comPort,buff,8);
 		device_state = Tango::OFF;
 	}
+	*/
+    
+    if(argin){
+        switch(number_of_motor){
+            case 0:
+                sprintf(buff,"081Z0000"); 
+                break;
+            case 1:
+                sprintf(buff,"081Y0000"); 
+                break;
+            case 2:
+                sprintf(buff,"081X0000"); 
+                break;
+            case 3:
+                sprintf(buff,"081K0000"); 
+                break;
+            case 4:
+                sprintf(buff,"081J0000"); 
+                break;
+            case 5:
+                sprintf(buff,"081I0000"); 
+                break;
+        }
+        device_state = Tango::ON;
+        printf("motor: %d ON\n",number_of_motor);
+    }else{
+        switch(number_of_motor){
+            case 0:
+                sprintf(buff,"081Z1000"); 
+                break;
+            case 1:
+                sprintf(buff,"081Y1000"); 
+                break;
+            case 2:
+                sprintf(buff,"081X1000"); 
+                break;
+            case 3:
+                sprintf(buff,"081K1000"); 
+                break;
+            case 4:
+                sprintf(buff,"081J1000"); 
+                break;
+            case 5:
+                sprintf(buff,"081I1000"); 
+                break;
+        }
+        device_state = Tango::OFF;
+        printf("motor: %d OFF\n",number_of_motor);
+    }
+    
+    writeread(comPort,buff,8);
 	
 	delete [] buff;
 
